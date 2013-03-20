@@ -255,7 +255,7 @@ public class OWLExtension extends DefaultClassManager implements NetLogoEntityIR
    * @throws ExtensionException
    */
   public IRI getEntityIRI(IRI iri, String nlEntity, boolean isClass) throws ExtensionException {
-    String nlEntityNoSpace = nlEntity.replace(' ', '_');
+    String nlEntityNoSpace = nlEntity.replaceAll("\\W", "_");
     String owlEntityName = nlEntityNoSpace.toLowerCase();
     if(isClass) {
       owlEntityName = owlEntityName.substring(0, 1).toUpperCase() + owlEntityName.substring(1);

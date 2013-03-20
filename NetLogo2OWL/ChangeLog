@@ -1,3 +1,10 @@
+2013-03-20  Gary Polhill  <gary.polhill@hutton.ac.uk>
+
+	* src/State.java
+	(getBreedAxioms): Replace all non-word characters with underscores to avoid
+	naming errors. ### possible bug if there are variables that end up over-writing
+	each other's URIs -- e.g. var? and var_
+
 2013-01-11  Gary Polhill  <gary.polhill@hutton.ac.uk>
 
 	* src/OWLExtension.java
