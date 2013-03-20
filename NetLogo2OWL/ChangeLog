@@ -1,0 +1,33 @@
+2013-01-11  Gary Polhill  <gary.polhill@hutton.ac.uk>
+
+	* src/OWLExtension.java
+	(setDomain): Converted link argument to lower case.
+	(setRange): Converted link argument to lower case.
+	(getDomain): Converted link argument to lower case.
+	(getRange): Converted link argument to lower case.
+	(hasDomainSpecified): Converted link argument to lower case.
+	(hasRangeSpecified): Converted link argument to lower case.
+	* src/State.java
+	(getGlobalAxioms): Ensured globals are accessed in order so that the correct
+	values are associated with each variable
+	(getPatchAxioms): Added an assertion that the patch individual is a member of
+	the Patch class
+	(getPatchAxioms): Do the processing if the no-patches option is NOT specified!
+	(getPatchAxioms): Correct for the patch 'own' variables including NetLogo
+	defaults. ### Possible bugs with Link and Turtle if they do the same. ###
+	* src/Structure.java
+	(getLinkAxioms): Added check of string length before comparing substrings with
+	UNDIR_LINK_BR and DIR_LINK_BR when reading code
+	(getPatchAxioms): Ignored first State.NETLOGO_PATCH_OWN_ARRAY_START in patches
+	own
+	(addLink): Make a comment if the link does not have any members and hence
+	directedness cannot be assessed
+	(getLinkAxioms): Compute the directedness of a link breed by checking its
+	members
+	* src/Options.java
+	(perform): Added offending arg to error message when option not recognised
+	(perform): Used arg.getString instead of arg.toString to obtain the arguments
+
+2013-01-11  Gary Polhill  <gary.polhill@hutton.ac.uk>
+
+	* All: code and comment tidy
