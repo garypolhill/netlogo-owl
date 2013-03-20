@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="MacRoman" standalone="no"?>
 <jardesc>
-    <jar path="/Users/gp1073/netlogo/cedss-owl/owl/owl.jar"/>
+    <jar path="/Users/gp1073/git/netlogo-owl/owl.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/NetLogo2OWL/owl.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
