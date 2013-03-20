@@ -144,6 +144,10 @@ public class State extends DefaultCommand implements Primitive {
     String model = modelIRI.toString();
 
     String physical = args[0].getString();
+    File physicalFile = new File(physical);
+    if(physicalFile.exists()) {
+      throw new ExtensionException("Physical location for state ontology (" + physical + ") exists");
+    }
     IRI physicalIRI = IRI.create(new File(physical));
 
     double tick = args[1].getDoubleValue();

@@ -4,6 +4,7 @@
 	(getBreedAxioms): Replace all non-word characters with underscores to avoid
 	naming errors. ### possible bug if there are variables that end up over-writing
 	each other's URIs -- e.g. var? and var_
+	(perform): Throw an exception if the physical URI exists
 
 2013-01-11  Gary Polhill  <gary.polhill@hutton.ac.uk>
 
