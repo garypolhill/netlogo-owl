@@ -143,13 +143,6 @@ public class State extends DefaultCommand implements Primitive {
 
     String model = modelIRI.toString();
 
-    String physical = args[0].getString();
-    File physicalFile = new File(physical);
-    if(physicalFile.exists()) {
-      throw new ExtensionException("Physical location for state ontology (" + physical + ") exists");
-    }
-    IRI physicalIRI = IRI.create(new File(physical));
-
     double tick = args[1].getDoubleValue();
     StringBuffer buff = new StringBuffer(model.endsWith(".owl") ? model.substring(0, model.length() - 4) : model);
     buff.append("-");
@@ -159,6 +152,21 @@ public class State extends DefaultCommand implements Primitive {
     }
 
     IRI logicalIRI = IRI.create(buff.toString());
+
+    String physical = args[0].getString();
+    
+    if(!physical.endsWith(".owl")) {
+      String logicalPath = logicalIRI.toURI().getPath();
+      String[] pathSplit = logicalPath.split("/");
+
+      physical += pathSplit[pathSplit.length];
+    }
+    
+    File physicalFile = new File(physical);
+    if(physicalFile.exists()) {
+      throw new ExtensionException("Physical location for state ontology (" + physical + ") exists");
+    }
+    IRI physicalIRI = IRI.create(new File(physical));
 
     Agent observer = context.getAgent();
     World world = observer.world();
