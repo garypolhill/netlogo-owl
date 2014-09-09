@@ -143,10 +143,16 @@ public class State extends DefaultCommand implements Primitive {
 
     String model = modelIRI.toString();
 
-    double tick = args[1].getDoubleValue();
     StringBuffer buff = new StringBuffer(model.endsWith(".owl") ? model.substring(0, model.length() - 4) : model);
-    buff.append("-");
-    buff.append(Double.toString(tick));
+    buff.append("-state-");
+
+    double ticks = args[1].getDoubleValue();
+    if(Math.rint(ticks) == ticks) {
+      buff.append(Long.toString(Math.round(ticks)));
+    }
+    else {
+      buff.append(Double.toString(ticks));
+    }
     if(model.endsWith(".owl")) {
       buff.append(".owl");
     }
@@ -159,7 +165,7 @@ public class State extends DefaultCommand implements Primitive {
       String logicalPath = logicalIRI.toURI().getPath();
       String[] pathSplit = logicalPath.split("/");
 
-      physical += pathSplit[pathSplit.length];
+      physical += pathSplit[pathSplit.length - 1];
     }
     
     File physicalFile = new File(physical);
