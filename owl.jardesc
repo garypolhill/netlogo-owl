@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="/Users/gp40285/git/netlogo-owl/owl.jar"/>
+    <jar path="netlogo-owl/owl.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/netlogo-owl/owl.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -11,6 +11,13 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <javaElement handleIdentifier="=netlogo-owl"/>
+        <file path="/netlogo-owl/.gitignore"/>
+        <file path="/netlogo-owl/LICENCE"/>
+        <file path="/netlogo-owl/.project"/>
+        <file path="/netlogo-owl/ChangeLog"/>
+        <javaElement handleIdentifier="=netlogo-owl/src"/>
+        <file path="/netlogo-owl/.classpath"/>
+        <file path="/netlogo-owl/manifest.txt"/>
+        <file path="/netlogo-owl/owl.jardesc"/>
     </selectedElements>
 </jardesc>

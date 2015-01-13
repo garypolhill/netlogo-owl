@@ -111,7 +111,7 @@ public class Domain extends DefaultCommand implements Primitive {
 
     if((program.breeds().size() > 0 && !program.breeds().containsKey(breed))
       || (program.breeds().size() == 0 && !breed.equals("TURTLES"))) {
-      throw new ExtensionException("No such breed as \"" + link + "\"");
+      throw new ExtensionException("No such breed as \"" + breed + "\"");
     }
 
     extension.setDomain(link, breed);
