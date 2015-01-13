@@ -105,7 +105,7 @@ public class Domain extends DefaultCommand implements Primitive {
     Program program = context.getAgent().world().program();
 
     if((program.linkBreeds().size() > 0 && !program.linkBreeds().containsKey(link))
-      || (program.linkBreeds().size() == 0 && !link.equals("LINKS"))) {
+      || (program.linkBreeds().size() == 0 && !link.equals("LINKS") && !link.equalsIgnoreCase(Structure.LOCATION_PROPERTY))) {
       throw new ExtensionException("No such link breed as \"" + link + "\"");
     }
 

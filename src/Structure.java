@@ -520,7 +520,12 @@ public class Structure extends DefaultCommand implements Primitive {
           factory.getOWLDataProperty(generator.getEntityIRI(Y_PROPERTY, false)),
           factory.getOWLDatatype(XSDVocabulary.DOUBLE.getIRI())));
 
-      addLinkProperty(axioms, logicalIRI, factory, LOCATION_PROPERTY, null, PATCH_CLASS, true, false, generator);
+      if(generator.hasDomainSpecified(LOCATION_PROPERTY)) {
+      	addLinkProperty(axioms, logicalIRI, factory, LOCATION_PROPERTY, generator.getDomain(LOCATION_PROPERTY), PATCH_CLASS, true, false, generator);
+      }
+      else {
+      	addLinkProperty(axioms, logicalIRI, factory, LOCATION_PROPERTY, null, PATCH_CLASS, true, false, generator);
+      }
     }
 
     return axioms;
