@@ -30,18 +30,18 @@ import java.util.Set;
 import org.nlogo.api.Agent;
 import org.nlogo.api.AgentSet;
 import org.nlogo.api.Argument;
+import org.nlogo.api.Command;
 import org.nlogo.api.Context;
-import org.nlogo.api.DefaultCommand;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.Link;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.LogoList;
 import org.nlogo.api.Patch;
-import org.nlogo.api.Primitive;
-import org.nlogo.api.Program;
-import org.nlogo.api.Syntax;
 import org.nlogo.api.Turtle;
 import org.nlogo.api.World;
+import org.nlogo.core.LogoList;
+import org.nlogo.core.Program;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.IRI;
@@ -57,6 +57,8 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.XSDVocabulary;
 
+import scala.collection.JavaConverters;
+
 /**
  * <!-- State -->
  * 
@@ -65,7 +67,7 @@ import org.semanticweb.owlapi.vocab.XSDVocabulary;
  * 
  * @author Gary Polhill
  */
-public class State extends DefaultCommand implements Primitive {
+public class State implements Command {
 
   /**
    * The OWLExtension object, for access to information about the ontology
@@ -102,20 +104,7 @@ public class State extends DefaultCommand implements Primitive {
    */
   @Override
   public Syntax getSyntax() {
-    return Syntax.commandSyntax(new int[] { Syntax.StringType(), Syntax.NumberType() });
-  }
-
-  /**
-   * <!-- getAgentClassString -->
-   * 
-   * The command can only be run from the observer
-   * 
-   * @see org.nlogo.api.DefaultCommand#getAgentClassString()
-   * @return String indicating as much
-   */
-  @Override
-  public String getAgentClassString() {
-    return "O";
+    return SyntaxJ.commandSyntax(new int[] { Syntax.StringType(), Syntax.NumberType() }, "O---");
   }
 
   /**
@@ -222,7 +211,7 @@ public class State extends DefaultCommand implements Primitive {
     OWLIndividual globalEntity = factory.getOWLNamedIndividual(generator.getGlobalIRI());
 
     int i = 0;
-    for(String global: program.globals()) {
+    for(String global: JavaConverters.seqAsJavaList(program.globals())) {
       Object value = observer.getVariable(i);
       addDataPropertyAxioms(logicalIRI, globalEntity,
           factory.getOWLDataProperty(generator.getEntityIRI(global, false)), value, axioms, factory, generator);
@@ -334,7 +323,7 @@ public class State extends DefaultCommand implements Primitive {
             factory.getOWLDataProperty(generator.getEntityIRI(Structure.Y_PROPERTY, false)), indiv, pycor));
 
         int i = 0;
-        for(String own: program.patchesOwn()) {
+        for(String own: JavaConverters.seqAsJavaList(program.patchesOwn())) {
           if(i >= NETLOGO_PATCH_OWN_ARRAY_START) {
             OWLDataProperty property = factory.getOWLDataProperty(generator.getEntityIRI(own, false));
             Object value = patch.getVariable(i);

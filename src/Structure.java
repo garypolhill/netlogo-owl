@@ -31,15 +31,15 @@ import java.util.Set;
 
 import org.nlogo.api.Agent;
 import org.nlogo.api.Argument;
+import org.nlogo.api.Command;
 import org.nlogo.api.Context;
-import org.nlogo.api.DefaultCommand;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.Link;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.Primitive;
-import org.nlogo.api.Program;
-import org.nlogo.api.Syntax;
 import org.nlogo.api.World;
+import org.nlogo.core.Program;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.IRI;
@@ -53,6 +53,10 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.XSDVocabulary;
+
+import scala.collection.Seq;
+import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 
 /**
  * <!-- Structure -->
@@ -87,7 +91,7 @@ import org.semanticweb.owlapi.vocab.XSDVocabulary;
  * 
  * @author Gary Polhill
  */
-public class Structure extends DefaultCommand implements Primitive {
+public class Structure implements Command {
 
   /**
    * Netlogo's plabel-color variable name for the colour of the patch label
@@ -162,20 +166,7 @@ public class Structure extends DefaultCommand implements Primitive {
    */
   @Override
   public Syntax getSyntax() {
-    return Syntax.commandSyntax(new int[] { Syntax.StringType() });
-  }
-
-  /**
-   * <!-- getAgentClassString -->
-   * 
-   * The command can only be run from the observer
-   * 
-   * @see org.nlogo.api.DefaultCommand#getAgentClassString()
-   * @return String indicating as much
-   */
-  @Override
-  public String getAgentClassString() {
-    return "O";
+    return SyntaxJ.commandSyntax(new int[] { Syntax.StringType() }, "O---");
   }
 
   /**
@@ -251,7 +242,7 @@ public class Structure extends DefaultCommand implements Primitive {
     Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
 
     Set<String> globals = new HashSet<String>();
-    globals.addAll(program.globals());
+    globals.addAll(JavaConverters.seqAsJavaList(program.globals()));
 
     for(String global: globals) {
       axioms.add(factory.getOWLDeclarationAxiom(factory.getOWLDataProperty(generator.getEntityIRI(global, false))));
@@ -316,12 +307,12 @@ public class Structure extends DefaultCommand implements Primitive {
           undirectedLinks, options);
     }
     else {
-      for(String link: program.linkBreeds().keySet()) {
+      for(String link: JavaConverters.asJavaIterable(program.linkBreeds().keys())) {
         String linkName =
-          program.linkBreedsSingular().containsKey(link) ? program.linkBreedsSingular().get(link) : link;
+          program.linkBreeds().contains(link) ? program.linkBreeds().get(link).get().name() : link;
         linkName = linkName.toLowerCase();
 
-        addLink(axioms, logicalIRI, factory, linkName, program.linkBreedsOwn().get(link), generator, directedLinks,
+        addLink(axioms, logicalIRI, factory, linkName, program.linkVars(link), generator, directedLinks,
             undirectedLinks, options);
       }
     }
@@ -413,6 +404,12 @@ public class Structure extends DefaultCommand implements Primitive {
     }
 
   }
+  
+  private static void addLink(Set<OWLAxiom> axioms, IRI logicalIRI, OWLDataFactory factory, String link,
+	      Seq<String> owns, NetLogoEntityIRIGenerator generator, Set<String> directedLinks, Set<String> undirectedLinks,
+	      Options options) throws ExtensionException {
+	  addLink(axioms, logicalIRI, factory, link, JavaConverters.seqAsJavaList(owns), generator, directedLinks, undirectedLinks, options);
+  }
 
   /**
    * <!-- reifyOut -->
@@ -496,7 +493,7 @@ public class Structure extends DefaultCommand implements Primitive {
         ArrayList<String> arr =
           new ArrayList<String>(program.patchesOwn().size() - State.NETLOGO_PATCH_OWN_ARRAY_START);
 
-        for(String var: program.patchesOwn()) {
+        for(String var: JavaConversions.asJavaIterable(program.patchesOwn())) {
           if(var.equalsIgnoreCase(NETLOGO_PXCOR_VAR) || var.equalsIgnoreCase(NETLOGO_PYCOR_VAR)
             || var.equalsIgnoreCase(NETLOGO_PCOLOR_VAR) || var.equalsIgnoreCase(NETLOGO_PLABEL_VAR)
             || var.equalsIgnoreCase(NETLOGO_PLABEL_COLOR_VAR)) {
@@ -551,9 +548,9 @@ public class Structure extends DefaultCommand implements Primitive {
       addClassAndProperties(axioms, logicalIRI, factory, TURTLE_CLASS, program.turtlesOwn(), generator);
     }
     else {
-      for(String breed: program.breeds().keySet()) {
-        String breedName = program.breedsSingular().containsKey(breed) ? program.breedsSingular().get(breed) : breed;
-        addClassAndProperties(axioms, logicalIRI, factory, breedName, program.breedsOwn().get(breed), generator);
+      for(String breed: JavaConversions.asJavaIterable(program.breeds().keys())) {
+        String breedName = program.breeds().contains(breed) ? program.breeds().get(breed).get().name() : breed;
+        addClassAndProperties(axioms, logicalIRI, factory, breedName, program.breeds().get(breed).get().owns(), generator);
       }
     }
     return axioms;
@@ -568,21 +565,29 @@ public class Structure extends DefaultCommand implements Primitive {
    * @param logicalIRI Logical IRI of the ontology
    * @param factory OWLDataFactory to build axioms with
    * @param name Name of the class to create
-   * @param owns Variables associated with the class (to create as data
+   * @param seq Variables associated with the class (to create as data
    *          properties)
    * @param generator Entity IRI generator
    * @throws ExtensionException
    */
   private static void addClassAndProperties(Set<OWLAxiom> axioms, IRI logicalIRI, OWLDataFactory factory, String name,
-      Iterable<String> owns, NetLogoEntityIRIGenerator generator) throws ExtensionException {
+      Iterable<String> seq, NetLogoEntityIRIGenerator generator) throws ExtensionException {
+	  
     OWLClass namedClass = factory.getOWLClass(generator.getEntityIRI(name, true));
     axioms.add(factory.getOWLDeclarationAxiom(namedClass));
 
-    for(String own: owns) {
+    for(String own: seq) {
       OWLDataProperty ownProperty = factory.getOWLDataProperty(generator.getEntityIRI(own, false));
       axioms.add(factory.getOWLDeclarationAxiom(ownProperty));
       axioms.add(factory.getOWLDataPropertyDomainAxiom(ownProperty, namedClass));
     }
+  }
+  
+  private static void addClassAndProperties(Set<OWLAxiom> axioms, IRI logicalIRI, OWLDataFactory factory, String name,
+	    Seq<String> seq, NetLogoEntityIRIGenerator generator) throws ExtensionException {
+	  
+	  addClassAndProperties(axioms, logicalIRI, factory, name, JavaConversions.asJavaIterable(seq), generator);
+	  
   }
 
   /**
