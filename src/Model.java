@@ -23,12 +23,12 @@
  */
 
 import org.nlogo.api.Argument;
+import org.nlogo.api.Command;
 import org.nlogo.api.Context;
-import org.nlogo.api.DefaultCommand;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.Primitive;
-import org.nlogo.api.Syntax;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 import org.semanticweb.owlapi.model.IRI;
 
 /**
@@ -36,7 +36,7 @@ import org.semanticweb.owlapi.model.IRI;
  * 
  * @author Gary Polhill
  */
-public class Model extends DefaultCommand implements Primitive {
+public class Model implements Command {
   private OWLExtension extension = null;
 
   /**
@@ -62,20 +62,7 @@ public class Model extends DefaultCommand implements Primitive {
    */
   @Override
   public Syntax getSyntax() {
-    return Syntax.commandSyntax(new int[] { Syntax.StringType() });
-  }
-
-  /**
-   * <!-- getAgentClassString -->
-   * 
-   * The command can only be run from the observer
-   * 
-   * @see org.nlogo.api.DefaultCommand#getAgentClassString()
-   * @return String indicating as much
-   */
-  @Override
-  public String getAgentClassString() {
-    return "O";
+    return SyntaxJ.commandSyntax(new int[] { Syntax.StringType() }, "O---");
   }
 
   /**

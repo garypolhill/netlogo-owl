@@ -23,13 +23,13 @@
  */
 
 import org.nlogo.api.Argument;
+import org.nlogo.api.Command;
 import org.nlogo.api.Context;
-import org.nlogo.api.DefaultCommand;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.Primitive;
-import org.nlogo.api.Program;
-import org.nlogo.api.Syntax;
+import org.nlogo.core.Program;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 
 /**
  * <!-- Domain -->
@@ -38,7 +38,7 @@ import org.nlogo.api.Syntax;
  * 
  * @author Gary Polhill
  */
-public class Domain extends DefaultCommand implements Primitive {
+public class Domain implements Command {
   private OWLExtension extension = null;
 
   /**
@@ -64,23 +64,10 @@ public class Domain extends DefaultCommand implements Primitive {
    */
   @Override
   public Syntax getSyntax() {
-    return Syntax.commandSyntax(new int[] { Syntax.StringType(), Syntax.StringType() });
+    return SyntaxJ.commandSyntax(new int[] { Syntax.StringType(), Syntax.StringType() }, "O---");
   }
 
-  /**
-   * <!-- getAgentClassString -->
-   * 
-   * The command can only be run from the observer
-   * 
-   * @see org.nlogo.api.DefaultCommand#getAgentClassString()
-   * @return String indicating as much
-   */
-  @Override
-  public String getAgentClassString() {
-    return "O";
-  }
-
-  /**
+   /**
    * <!-- perform -->
    * 
    * @see org.nlogo.api.Command#perform(org.nlogo.api.Argument[],
@@ -104,12 +91,12 @@ public class Domain extends DefaultCommand implements Primitive {
 
     Program program = context.getAgent().world().program();
 
-    if((program.linkBreeds().size() > 0 && !program.linkBreeds().containsKey(link) && !link.equalsIgnoreCase(Structure.LOCATION_PROPERTY))
+    if((program.linkBreeds().size() > 0 && !program.linkBreeds().contains(link) && !link.equalsIgnoreCase(Structure.LOCATION_PROPERTY))
       || (program.linkBreeds().size() == 0 && !link.equals("LINKS") && !link.equalsIgnoreCase(Structure.LOCATION_PROPERTY))) {
       throw new ExtensionException("No such link breed as \"" + link + "\"");
     }
 
-    if((program.breeds().size() > 0 && !program.breeds().containsKey(breed))
+    if((program.breeds().size() > 0 && !program.breeds().contains(breed))
       || (program.breeds().size() == 0 && !breed.equals("TURTLES"))) {
       throw new ExtensionException("No such breed as \"" + breed + "\"");
     }
